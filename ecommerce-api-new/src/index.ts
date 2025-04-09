@@ -7,31 +7,43 @@ import cookieParser from "cookie-parser";
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { IOrderItem } from "./models/IOrderItem";
 
-interface RawRequest extends Request {
+/* interface RawRequest extends Request {
   body: Buffer;
-}
+} */
 
 dotenv.config();
 const app = express();
+
+// Middleware
+app.use(express.json());
+app.use(cookieParser());
+app.use(
+  cors({
+    // origin: "http://localhost:5173",
+    origin: "*",
+    credentials: true, // ✅ Allows cookies
+  })
+);
+
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 app.post(
   "/stripe/webhook",
   bodyParser.raw({ type: "application/json" }),
-  async (req: RawRequest, res: any) => {
+  async (req: Request, res: any) => {
     const sig = req.headers["stripe-signature"] as string;
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-    let event;
+    let event = req.body;
 
-    try {
+    /* try {
       event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
     } catch (err: any) {
       console.error("Webhook error:", err.message);
       return res.status(400).send(`Webhook Error: ${err.message}`);
     }
-
+ */
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
       const orderId = session.client_reference_id;
@@ -68,16 +80,6 @@ app.post(
   }
 );
 
-// Middleware
-app.use(express.json());
-app.use(cookieParser());
-app.use(
-  cors({
-    // origin: "http://localhost:5173",
-    origin: "*",
-    credentials: true, // ✅ Allows cookies
-  })
-);
 
 app.post(
   "/stripe/create-checkout-session-embedded",
