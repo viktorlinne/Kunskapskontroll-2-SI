@@ -5,6 +5,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import { VercelRequest, VercelResponse } from "@vercel/node";
+import { IOrderItem } from "./models/IOrderItem";
 
 interface RawRequest extends Request {
   body: Buffer;
@@ -85,7 +86,7 @@ app.post(
     console.log("cartItems", cartItems, "orderId", orderId);
     try {
       try {
-        const line_items = cartItems.map((item) => ({
+        const line_items = cartItems.map((item: IOrderItem) => ({
           price_data: {
             currency: "sek",
             product_data: {
