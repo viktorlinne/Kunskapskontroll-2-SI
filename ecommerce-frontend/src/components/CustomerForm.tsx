@@ -11,7 +11,6 @@ const emptyForm: ICustomer = {
   firstname: "",
   lastname: "",
   email: "",
-  password: "",
   phone: "",
   street_address: "",
   postal_code: "",
@@ -23,7 +22,7 @@ const emptyForm: ICustomer = {
 export const CustomerForm = ({
   submitHandler,
 }: {
-  submitHandler: (id:IOrder["id"]) => void;
+  submitHandler: (id: IOrder["id"]) => void;
 }) => {
   const [formData, setFormData] = useState<ICustomer>(() => {
     const savedForm = localStorage.getItem("customerForm");
@@ -54,15 +53,8 @@ export const CustomerForm = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-     
-
     if (!/\S+@\S+\.\S+/.test(formData.email)) {
       setMessage("Invalid email address.");
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      setMessage("Password must be at least 6 characters.");
       return;
     }
 
@@ -103,7 +95,6 @@ export const CustomerForm = ({
           { name: "firstname", placeholder: "First Name" },
           { name: "lastname", placeholder: "Last Name" },
           { name: "email", placeholder: "Email", type: "email" },
-          { name: "password", placeholder: "Password", type: "password" },
           { name: "phone", placeholder: "Phone" },
           { name: "street_address", placeholder: "Street Address" },
           { name: "postal_code", placeholder: "Postal Code" },
