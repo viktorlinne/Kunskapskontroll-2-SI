@@ -7,10 +7,6 @@ import cookieParser from "cookie-parser";
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { IOrderItem } from "./models/IOrderItem";
 
-/* interface RawRequest extends Request {
-  body: Buffer;
-} */
-
 dotenv.config();
 const app = express();
 
@@ -25,7 +21,6 @@ app.use(
   })
 );
 
-
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 app.post(
@@ -37,13 +32,6 @@ app.post(
 
     let event = req.body;
 
-    /* try {
-      event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-    } catch (err: any) {
-      console.error("Webhook error:", err.message);
-      return res.status(400).send(`Webhook Error: ${err.message}`);
-    }
- */
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
       const orderId = session.client_reference_id;
@@ -79,7 +67,6 @@ app.post(
     res.status(200).end();
   }
 );
-
 
 app.post(
   "/stripe/create-checkout-session-embedded",
