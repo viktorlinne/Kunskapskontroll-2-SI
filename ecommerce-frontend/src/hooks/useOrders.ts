@@ -5,6 +5,7 @@ import {
   getOrders,
   getSpecificOrder,
   updateOrder,
+  getOrderByPaymentId as getOrderByPaymentIdService,
 } from "../services/orderService";
 import { IOrder } from "../interfaces/IOrder";
 import { ICartItem } from "../interfaces/ICartItem";
@@ -24,7 +25,7 @@ export const useOrders = () => {
         setOrders(data);
       } catch (err) {
         console.error("Error fetching orders:", err);
-        setError(err.message);
+        setError((err as Error).message);
       } finally {
         setLoading(false);
       }
@@ -34,22 +35,25 @@ export const useOrders = () => {
   }, []);
 
   const getOrderByPaymentId = async (paymentId: string): Promise<IOrder> => {
-    const response = await getOrderByPaymentId(paymentId);
-  
-    console.log(response)
-    return response;
-
-  }
-
-  const createOrder= async (customer: ICustomer, cartItems: ICartItem[]) => {
     try {
-      
+      const response = await getOrderByPaymentIdService(paymentId);
+      console.log(response);
+      return response;
+    } catch (err) {
+      console.error("Error fetching order by payment ID:", err);
+      setError((err as Error).message);
+      throw err; 
+    }
+  };
+
+  const createOrder = async (customer: ICustomer, cartItems: ICartItem[]) => {
+    try {
       const orderItems: Partial<IOrderItem>[] = cartItems.map((item) => ({
         product_id: item.id as number,
         product_name: item.name,
         unit_price: item.price,
         quantity: item.quantity,
-        created_at:"",
+        created_at: "", 
         image_url: item.image,
       }));
 
@@ -58,21 +62,20 @@ export const useOrders = () => {
         payment_status: "Unpaid",
         payment_id: "",
         order_status: "Pending",
-        order_items: [...orderItems]
+        order_items: orderItems,
       };
 
       const response = await createOrderService(orderData);
       console.log(response);
+
       const fullOrder = await getSpecificOrder(response.id as IOrder["id"]);
       setOrders((prevState) => [...prevState, fullOrder]);
+
       console.log("Order created successfully");
-      console.log(fullOrder.id);
       return fullOrder.id;
-
-
     } catch (err) {
       console.error("Error creating order:", err);
-      setError(err.message);
+      setError((err as Error).message);
     }
   };
 
@@ -84,21 +87,21 @@ export const useOrders = () => {
         prevState.filter((current) => current.id !== id)
       );
     } catch (err) {
-      console.error("Error deleting customer:", err);
-      setError(err.message);
+      console.error("Error deleting order:", err);
+      setError((err as Error).message);
     }
   };
 
   const updateOrderById = async (order: IOrder) => {
     try {
-      const updatedOrder= await updateOrder(order);
+      const updatedOrder = await updateOrder(order);
       setOrders((prevState) =>
         prevState.map((p) => (p.id === order.id ? updatedOrder : p))
       );
       console.log("Order updated successfully");
     } catch (err) {
       console.error("Error updating order:", err);
-      setError(err.message);
+      setError((err as Error).message);
     }
   };
 
@@ -109,5 +112,6 @@ export const useOrders = () => {
     createOrder,
     deleteOrderById,
     updateOrderById,
+    getOrderByPaymentId,
   };
 };

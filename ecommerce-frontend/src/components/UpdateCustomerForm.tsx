@@ -27,7 +27,10 @@ export const UpdateCustomerForm = () => {
   useEffect(() => {
     const fetchCustomer = async () => {
       try {
-        const customer = await getSpecificCustomer(Number(id));
+        if (!id) {
+          throw new Error("Customer ID is undefined.");
+        }
+        const customer = await getSpecificCustomer(id);
         console.log(`Updating customer with id: ${customer.id}`);
         setFormData(customer);
       } catch (error) {
