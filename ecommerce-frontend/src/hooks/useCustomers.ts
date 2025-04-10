@@ -3,6 +3,7 @@ import {
   deleteCustomer,
   getCustomers,
   updateCustomer,
+  createCustomer as createCustomerService,
 } from "../services/customerService";
 import { ICustomer } from "../interfaces/ICustomer";
 
@@ -19,7 +20,7 @@ export const useCustomers = () => {
         setCustomers(data);
       } catch (err) {
         console.error("Error fetching customers:", err);
-        setError(err.message);
+        setError((err as Error).message);
       } finally {
         setLoading(false);
       }
@@ -30,12 +31,12 @@ export const useCustomers = () => {
 
   const createCustomer = async (customer: ICustomer) => {
     try {
-      const response: ICustomer = await createCustomer(customer);
-      console.log(response);
+      const response: ICustomer = await createCustomerService(customer);
+      setCustomers((prev) => [...prev, response]);
       return response;
     } catch (err) {
       console.error("Error creating customer:", err);
-      setError(err.message);
+      setError((err as Error).message);
     }
   };
 
@@ -48,7 +49,7 @@ export const useCustomers = () => {
       );
     } catch (err) {
       console.error("Error deleting customer:", err);
-      setError(err.message);
+      setError((err as Error).message);
     }
   };
 
@@ -61,7 +62,7 @@ export const useCustomers = () => {
       console.log("Customer updated successfully");
     } catch (err) {
       console.error("Error updating customer:", err);
-      setError(err.message);
+      setError((err as Error).message);
     }
   };
 

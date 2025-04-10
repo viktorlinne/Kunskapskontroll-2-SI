@@ -3,6 +3,7 @@ import {
   getProducts,
   deleteProduct,
   updateProduct,
+  createProduct as createProductService,
 } from "../services/productService";
 import { IProduct } from "../interfaces/IProduct";
 
@@ -19,7 +20,7 @@ export const useProducts = () => {
         setProducts(data);
       } catch (err) {
         console.error("Error fetching products:", err);
-        setError(err.message);
+        setError((err as Error).message);
       } finally {
         setLoading(false);
       }
@@ -30,11 +31,12 @@ export const useProducts = () => {
 
   const createProduct = async (product: IProduct) => {
     try {
-      const response = await createProduct(product);
+      const response = await createProductService(product);
+      setProducts((prev) => [...prev, response]);
       console.log(response);
     } catch (err) {
       console.error("Error creating product:", err);
-      setError(err.message);
+      setError((err as Error).message);
     }
   };
 
@@ -46,8 +48,8 @@ export const useProducts = () => {
         prevState.filter((current) => current.id !== id)
       );
     } catch (err) {
-      console.error("Error Deleting Product:", err);
-      setError(err.message);
+      console.error("Error deleting product:", err);
+      setError((err as Error).message);
     }
   };
 
@@ -59,8 +61,8 @@ export const useProducts = () => {
       );
       console.log("Product updated successfully");
     } catch (err) {
-      console.error("Error Updating Product:", err);
-      setError(err.message);
+      console.error("Error updating product:", err);
+      setError((err as Error).message);
     }
   };
 
