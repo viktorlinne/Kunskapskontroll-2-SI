@@ -9,4 +9,5 @@ export interface ICustomer {
   city: string;
   country: string;
   created_at: string;
+  password: string; 
 }

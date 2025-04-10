@@ -1,7 +1,6 @@
 import { useState, useEffect, useContext } from "react";
-import { createCustomer } from "../services/customerService";
+import { createCustomer, getSpecificCustomer } from "../services/customerService";
 import { ICustomer } from "../interfaces/ICustomer";
-import { getSpecificCustomer } from "../services/customerService";
 import { useOrders } from "../hooks/useOrders";
 import { CartContext } from "../context/CartContext";
 import { IOrder } from "../interfaces/IOrder";
@@ -17,6 +16,7 @@ const emptyForm: ICustomer = {
   city: "",
   country: "",
   created_at: "",
+  password: "", 
 };
 
 export const CustomerForm = ({
@@ -28,6 +28,7 @@ export const CustomerForm = ({
     const savedForm = localStorage.getItem("customerForm");
     return savedForm ? JSON.parse(savedForm) : emptyForm;
   });
+
   const [message, setMessage] = useState("");
   const { cartItems } = useContext(CartContext);
   const { createOrder } = useOrders();
@@ -100,6 +101,7 @@ export const CustomerForm = ({
           { name: "postal_code", placeholder: "Postal Code" },
           { name: "city", placeholder: "City" },
           { name: "country", placeholder: "Country" },
+          { name: "password", placeholder: "Password", type: "password" }, 
         ].map((field) => (
           <input
             key={field.name}
@@ -112,6 +114,7 @@ export const CustomerForm = ({
             className="w-full p-2 border rounded"
           />
         ))}
+
         <button
           type="submit"
           className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
@@ -122,3 +125,4 @@ export const CustomerForm = ({
     </div>
   );
 };
+
