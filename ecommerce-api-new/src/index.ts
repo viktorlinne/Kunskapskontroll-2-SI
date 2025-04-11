@@ -15,9 +15,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    // origin: "http://localhost:5173",
-    origin: "*",
-    credentials: true, // ✅ Allows cookies
+    origin: "https://kunskapskontroll-2-si-frontend.vercel.app",
+    credentials: true, 
   })
 );
 
@@ -92,7 +91,7 @@ app.post(
           mode: "payment",
           line_items: line_items,
           ui_mode: "embedded",
-          return_url: `http://localhost:5173/confirmation?session_id={CHECKOUT_SESSION_ID}`,
+          return_url: `https://kunskapskontroll-2-si-frontend.vercel.app/confirmation?session_id={CHECKOUT_SESSION_ID}`,
           client_reference_id: orderId,
         });
 
@@ -123,9 +122,9 @@ app.use("/order-items", orderItemRouter);
 app.use("/stripe", stripeRouter);
 app.use("/auth", authRouter);
 
-// Attempt to connect to the database
+
 connectDB();
-// Start Express server
+
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`The server is running at http://localhost:${PORT}`);
