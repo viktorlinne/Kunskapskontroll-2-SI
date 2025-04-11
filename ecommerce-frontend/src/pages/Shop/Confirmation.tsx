@@ -48,6 +48,7 @@ export const Confirmation = () => {
           country: order.customer_country,
           id: 0,
           created_at: "",
+          password: ""
         };
 
         setCustomer(customerData);
