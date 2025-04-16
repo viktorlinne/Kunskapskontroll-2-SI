@@ -39,7 +39,7 @@ export const Search = () => {
         {
           params: {
             q: query,
-            key: "AIzaSyCJRk5_bcsvuE65hy_-lr6pZLarO7u70EM",
+            key: process.env.GOOGLE_API_KEY,
             cx: "b449b74a29a664c89",
             start: startIndex,
           },
