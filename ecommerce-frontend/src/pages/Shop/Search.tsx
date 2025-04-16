@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState, ChangeEvent, FormEvent } from "react";
+import { useNavigate, useSearchParams } from "react-router";
 import { ISearchItem } from "../../interfaces/ISearchItem";
 import { Pagination } from "../../components/Pagination";
 
@@ -12,7 +13,10 @@ const getThumbnailSrc = (item: ISearchItem): string => {
 };
 
 export const Search = () => {
-  const [searchText, setSearchText] = useState("");
+  const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const query = params.get("q") || "";
+  const [searchText, setSearchText] = useState(query);
   const [items, setItems] = useState<ISearchItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [startIndex, setStartIndex] = useState(1);
@@ -22,39 +26,47 @@ export const Search = () => {
   const handleSearch = async (e?: FormEvent) => {
     if (e) e.preventDefault();
     if (!searchText.trim()) return;
-    setLoading(true);
 
+    navigate(`/search?q=${encodeURIComponent(searchText)}&start=${startIndex}`);
+  };
+
+  const fetchSearchResults = async () => {
+    if (!query) return;
+    setLoading(true);
     try {
       const response = await axios.get(
         "https://www.googleapis.com/customsearch/v1",
         {
           params: {
-            q: searchText,
+            q: query,
             key: "AIzaSyCJRk5_bcsvuE65hy_-lr6pZLarO7u70EM",
             cx: "b449b74a29a664c89",
             start: startIndex,
           },
         }
       );
-
+      setSearchText("");
       setItems(response.data.items || []);
       setTotalResults(
         parseInt(response.data.searchInformation?.totalResults || "0")
       );
       setError(null);
     } catch (error) {
+      setSearchText("");
       setError("An error occurred while fetching the search results.");
     } finally {
+      setSearchText("");
       setLoading(false);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   useEffect(() => {
-    if (searchText) {
-      handleSearch();
+    setSearchText(query);
+    if (query) {
+      fetchSearchResults();
     }
-  }, [startIndex]);
+  }, [query, startIndex]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-start p-10">
@@ -71,10 +83,10 @@ export const Search = () => {
             type="text"
             placeholder="Search..."
             className="w-full sm:w-auto flex-grow border border-gray-300 rounded-lg p-2 shadow-sm"
+            value={searchText}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               setSearchText(e.target.value)
             }
-            value={searchText}
           />
           <button
             type="submit"
