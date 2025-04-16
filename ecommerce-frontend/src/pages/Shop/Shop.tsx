@@ -1,4 +1,4 @@
-import { Link } from "react-router"; // Fixed incorrect import from "react-router"
+import { Link } from "react-router";
 import { useProducts } from "../../hooks/useProducts";
 import { AddToCartButton } from "../../components/AddToCartButton";
 import { GoToCartButton } from "../../components/GoToCartButton";
@@ -10,8 +10,12 @@ export const Shop = () => {
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Welcome To My Webshop!</h2>
       <GoToCartButton />
+
       {loading ? (
-        <p className="text-center text-gray-600 mt-4">Loading products...</p>
+        <div className="text-center py-10">
+          <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mx-auto mb-4 animate-spin"></div>
+          <p className="text-gray-500">Loading products...</p>
+        </div>
       ) : error ? (
         <p className="text-center text-red-600 mt-4">Error loading products.</p>
       ) : (
@@ -21,7 +25,10 @@ export const Shop = () => {
               key={product.id}
               className="rounded-2xl overflow-hidden shadow-lg bg-white p-4 flex flex-col justify-between"
             >
-              <Link to={`/${product.id}`} className="flex flex-col justify-between h-full">
+              <Link
+                to={`/${product.id}`}
+                className="flex flex-col justify-between h-full"
+              >
                 <img
                   className="w-full h-48 object-contain rounded-lg"
                   src={product.image}
@@ -29,7 +36,9 @@ export const Shop = () => {
                 />
                 <div className="px-2 py-3">
                   <h2 className="text-xl font-bold mb-1">{product.name}</h2>
-                  <p className="text-gray-600 text-sm mb-2">{product.category}</p>
+                  <p className="text-gray-600 text-sm mb-2">
+                    {product.category}
+                  </p>
                   <p className="text-gray-700 text-base line-clamp-2">
                     {product.description}
                   </p>
@@ -59,4 +68,3 @@ export const Shop = () => {
     </div>
   );
 };
-

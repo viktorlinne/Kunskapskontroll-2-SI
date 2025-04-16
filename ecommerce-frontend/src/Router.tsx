@@ -4,6 +4,7 @@ import { NotFound } from "./pages/NotFound";
 import { ManageProducts } from "./pages/Admin/ManageProducts";
 import { AdminLayout } from "./pages/Layouts/AdminLayout";
 import { Shop } from "./pages/Shop/Shop";
+import { Search } from "./pages/Shop/Search";
 import { ManageOrders } from "./pages/Admin/ManageOrders";
 import { UpdateProduct } from "./pages/Admin/UpdateProduct";
 import { UpdateOrder } from "./pages/Admin/UpdateOrder";
@@ -29,6 +30,10 @@ export const router = createBrowserRouter([
       {
         path: "/:id",
         element: <Product />,
+      },
+      {
+        path: "/search",
+        element: <Search />,
       },
       {
         path: "cart",
